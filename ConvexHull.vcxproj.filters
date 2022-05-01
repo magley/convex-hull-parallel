@@ -301,9 +301,21 @@
     <ClInclude Include="include\SDL2\SDL_vulkan.h">
       <Filter>Header Files\SDL</Filter>
     </ClInclude>
+    <ClInclude Include="src\mathutil.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\convex_hull.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mathutil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\convex_hull.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

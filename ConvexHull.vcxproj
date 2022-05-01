@@ -89,7 +89,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Lazar\FAKULTET\22_PP\projekat\convex-hull-parallel\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Lazar\FAKULTET\22_PP\projekat\convex-hull-parallel\src;D:\Lazar\FAKULTET\22_PP\projekat\convex-hull-parallel\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -241,9 +241,13 @@
     <ClInclude Include="include\SDL2\SDL_version.h" />
     <ClInclude Include="include\SDL2\SDL_video.h" />
     <ClInclude Include="include\SDL2\SDL_vulkan.h" />
+    <ClInclude Include="src\convex_hull.h" />
+    <ClInclude Include="src\mathutil.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\convex_hull.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\mathutil.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
