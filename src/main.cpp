@@ -58,13 +58,14 @@ int main(int argc, char** argv) {
 	vector<Vec2> points;
 	for (int i = 0; i < 100; i++) {
 		Vec2 p;
-		const int margin = 150;
+		const int margin = 150 - (i);
 		p.x = random_range(margin, 480 - margin);
 		p.y = random_range(margin, 480 - margin);
 		points.push_back(p);
 	}
 
-	vector<Vec2> hull = convex_hull_bruteforce(points, true);
+	vector<Vec2> hull = convex_hull_bruteforce(points);
+	sort_by_polar_coords(hull);
 
 	while (running) {
 		while (SDL_PollEvent(&ev)) {

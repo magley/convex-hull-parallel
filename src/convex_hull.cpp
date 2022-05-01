@@ -3,7 +3,7 @@
 
 using namespace std;
 
-bool same_side(Vec2 A, Vec2 B, const vector<Vec2>& points) {
+static bool same_side(Vec2 A, Vec2 B, const vector<Vec2>& points) {
 	bool should_be = on_left_side(A, B, points[0]);
 	for (int i = 1; i < points.size(); i++) {
 		if (points[i] == A || points[i] == B)
@@ -15,7 +15,21 @@ bool same_side(Vec2 A, Vec2 B, const vector<Vec2>& points) {
 	return true;
 }
 
-vector<Vec2> convex_hull_bruteforce(const vector<Vec2>& points, bool polar_sorted) {
+void sort_by_polar_coords(std::vector<Vec2>& points) {
+	Vec2 reference = Vec2(0, 0);
+	for (int i = 0; i < points.size(); i++) {
+		reference.x += points[i].x;
+		reference.y += points[i].y;
+	}
+	reference.x /= points.size();
+	reference.y /= points.size();
+
+	sort(points.begin(), points.end(), [reference](const Vec2& A, const Vec2& B) {
+		return A.get_angle_between(reference) < B.get_angle_between(reference);
+	});
+}
+
+vector<Vec2> convex_hull_bruteforce(const vector<Vec2>& points) {
 	/* The brute force algorithm works by checking
 	 * whether each pair of 2 points forms a line
 	 * segment which is also an edge of the hull.
@@ -36,20 +50,9 @@ vector<Vec2> convex_hull_bruteforce(const vector<Vec2>& points, bool polar_sorte
 			}
 		}
 	}
-
-	if (polar_sorted) {
-		Vec2 reference = Vec2(0, 0);
-		for (int i = 0; i < points.size(); i++) {
-			reference.x += points[i].x;
-			reference.y += points[i].y;
-		}
-		reference.x /= points.size();
-		reference.y /= points.size();
-
-		sort(result.begin(), result.end(), [reference](const Vec2& A, const Vec2& B) {
-			return A.get_angle_between(reference) < B.get_angle_between(reference);
-			});
-	}
-
 	return result;
+}
+
+std::vector<Vec2> convex_hull_divide_and_conquer(const std::vector<Vec2>& points) {
+	return points;
 }

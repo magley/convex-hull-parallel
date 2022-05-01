@@ -58,5 +58,3 @@ int find_rightmost(const vector<Vec2>& arr) {
 bool on_left_side(Vec2 A, Vec2 B, Vec2 P) {
 	return ((B.x - A.x) * (P.y - A.y) - (B.y - A.y) * (P.x - A.x)) > 0;
 }
-
-
