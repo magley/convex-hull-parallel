@@ -17,6 +17,8 @@ using namespace tbb;
 void draw_points(SDL_Renderer* rend, const vector<Vec2>& points, SDL_Color col, Vec2 size) {
 	SDL_SetRenderDrawColor(rend, col.r, col.g, col.b, col.a);
 	for (int i = 0; i < points.size(); i++) {
+		//size.x += i * 0.25;
+		//size.y += i * 0.25;
 		Vec2 point = points[i];
 		SDL_FRect r{ point.x - size.x / 2, point.y - size.y / 2, size.x, size.y };
 		SDL_RenderFillRectF(rend, &r);
@@ -56,49 +58,24 @@ vector<Vec2> get_hull(const vector<Vec2>& points) {
 	return hull;
 }
 
-
-bool merge_step(vector<Vec2>& left, vector<Vec2>& right, int& l, int& r) {
+bool merge_step(vector<Vec2>& left, vector<Vec2>& right, int& l, int& r, int tangent_side) {
 	int result = 0;
 
 	int s = 0;
-	s = side(left[l], right[r], left[(l + 1) % left.size()]);
-	if (s >= 0) {
+	s = side(left[l], right[r], left[(int)(left.size() + l + tangent_side) % (int)left.size()]);
+	if (s * tangent_side >= 0) {
 		result++;
 	}
 	else {
-		l = (l + 1) % left.size();
+		l = (int)(left.size() + l + tangent_side) % (int)left.size();
 	}
-	s = side(left[l], right[r], right[(r - 1) % right.size()]);
-	if (s >= 0) {
+	s = side(left[l], right[r], right[(int)(right.size() + r - tangent_side) % (int)right.size()]);
+	if (s * tangent_side >= 0) {
 		result++;
 	}
 	else {
-		r = (r - 1) % right.size();
+		r = (int)(right.size() + r - tangent_side) % (int)right.size();
 	}
-
-	return result == 2;
-}
-
-bool merge_step2(vector<Vec2>& left, vector<Vec2>& right, int& l, int& r) {
-	int result = 0;
-
-	int s = 0;
-
-	s = side(right[r], left[l], left[(l - 1) % left.size()]);
-	if (s <= 0) {
-		result++;
-	}
-	else {
-		l = (l - 1) % left.size();
-	}
-	s = side(left[l], right[r], right[(r + 1) % right.size()]);
-	if (s <= 0) {
-		result++;
-	}
-	else {
-		r = (r + 1) % right.size();
-	}
-
 
 	return result == 2;
 }
@@ -110,7 +87,6 @@ enum {
 	PHASE_TANGENT,
 	PHASE_MERGE
 };
-
 
 int main(int argc, char** argv) {
 	SDL_Init(SDL_INIT_VIDEO);
@@ -132,7 +108,7 @@ int main(int argc, char** argv) {
 	SDL_Texture* tex_test = IMG_LoadTexture(rend, "res\\img_test.png");
 	SDL_Event ev;
 	bool running = true;
-	int t = 16171727172; //time(NULL); 
+	int t = 20030046; 
 	srand(t);
 
 	int phase = PHASE_POINTS;
@@ -166,7 +142,7 @@ int main(int argc, char** argv) {
 	vector<Vec2> result;
 
 	int i = 0;
-	int time = 30;
+	int time = 50;
 
 	while (running) {
 		while (SDL_PollEvent(&ev)) {
@@ -205,10 +181,10 @@ int main(int argc, char** argv) {
 			else if (phase == PHASE_TANGENT) {
 				int ok = 2;
 
-				if (merge_step(left, right, top_l, top_r))
+				if (merge_step(left, right, top_l, top_r, 1))
 					ok--;
 
-				if (merge_step2(left, right, bot_l, bot_r))
+				if (merge_step(left, right, bot_l, bot_r, -1))
 					ok--;
 
 				if (ok == 0) {
