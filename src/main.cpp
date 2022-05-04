@@ -10,43 +10,21 @@
 
 #include "mathutil.h"
 #include "convex_hull.h"
+#include "rendutil.h"
 
 using namespace std;
 using namespace tbb;
 
-void draw_points(SDL_Renderer* rend, const vector<Vec2>& points, SDL_Color col, Vec2 size) {
-	SDL_SetRenderDrawColor(rend, col.r, col.g, col.b, col.a);
-	for (int i = 0; i < points.size(); i++) {
-		//size.x += i * 0.25;
-		//size.y += i * 0.25;
-		Vec2 point = points[i];
-		SDL_FRect r{ point.x - size.x / 2, point.y - size.y / 2, size.x, size.y };
-		SDL_RenderFillRectF(rend, &r);
-	}
-}
-
-void draw_polygon(SDL_Renderer* rend, const vector<Vec2>& points, SDL_Color col) {
-	SDL_SetRenderDrawColor(rend, col.r, col.g, col.b, col.a);
-	for (int i = 0; i < points.size(); i++) {
-		Vec2 A = points[i];
-		Vec2 B = points[(i + 1) % points.size()];
-		SDL_RenderDrawLineF(rend, A.x, A.y, B.x, B.y);
-	}
-}
-
-void draw_line(SDL_Renderer* rend, Vec2 A, Vec2 B, SDL_Color col) {
-	SDL_SetRenderDrawColor(rend, col.r, col.g, col.b, col.a);
-	SDL_RenderDrawLineF(rend, A.x, A.y, B.x, B.y);
-}
+#define WIN_SIZE 600
 
 vector<Vec2> generate_points() {
 	vector<Vec2> points;
 
-	for (int i = 0; i < 15; i++) {
+	for (int i = 0; i < 100; i++) {
 		Vec2 p;
-		const int margin = 100;
-		p.x = random_range(margin, 480 - margin);
-		p.y = random_range(margin, 480 - margin);
+		const int margin = 12;
+		p.x = random_range(margin, WIN_SIZE - margin);
+		p.y = random_range(margin, WIN_SIZE - margin);
 		points.push_back(p);
 	}
 	return points;
@@ -58,36 +36,6 @@ vector<Vec2> get_hull(const vector<Vec2>& points) {
 	return hull;
 }
 
-bool merge_step(vector<Vec2>& left, vector<Vec2>& right, int& l, int& r, int tangent_side) {
-	int result = 0;
-
-	int s = 0;
-	s = side(left[l], right[r], left[(int)(left.size() + l + tangent_side) % (int)left.size()]);
-	if (s * tangent_side >= 0) {
-		result++;
-	}
-	else {
-		l = (int)(left.size() + l + tangent_side) % (int)left.size();
-	}
-	s = side(left[l], right[r], right[(int)(right.size() + r - tangent_side) % (int)right.size()]);
-	if (s * tangent_side >= 0) {
-		result++;
-	}
-	else {
-		r = (int)(right.size() + r - tangent_side) % (int)right.size();
-	}
-
-	return result == 2;
-}
-
-enum {
-	PHASE_POINTS,
-	PHASE_DIVIDE,
-	PHASE_CONQUER,
-	PHASE_TANGENT,
-	PHASE_MERGE
-};
-
 int main(int argc, char** argv) {
 	SDL_Init(SDL_INIT_VIDEO);
 	IMG_Init(IMG_INIT_PNG);
@@ -95,8 +43,8 @@ int main(int argc, char** argv) {
 		"convex hull",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
-		480,
-		480,
+		WIN_SIZE,
+		WIN_SIZE,
 		SDL_WINDOW_OPENGL
 	);
 	SDL_Renderer* rend = SDL_CreateRenderer(
@@ -108,41 +56,11 @@ int main(int argc, char** argv) {
 	SDL_Texture* tex_test = IMG_LoadTexture(rend, "res\\img_test.png");
 	SDL_Event ev;
 	bool running = true;
-	int t = 20030046; 
+	int t = time(NULL);
 	srand(t);
 
-	int phase = PHASE_POINTS;
-
 	vector<Vec2> points = generate_points();
-
-	// Divide
-	
-	pair<vector<Vec2>, vector<Vec2>> divided;
-
-	vector<Vec2> points_left;
-	vector<Vec2> points_right;
-
-	vector<Vec2> left;
-	vector<Vec2> right;
-
-	// Right-left
-
-	int l;
-	int r;
-
-	// Tangents
-
-	int top_l;
-	int top_r;
-	int bot_l;
-	int bot_r;
-	
-	// Combine into final hull
-
-	vector<Vec2> result;
-
-	int i = 0;
-	int time = 50;
+	vector<Vec2> hull = get_hull(points);
 
 	while (running) {
 		while (SDL_PollEvent(&ev)) {
@@ -151,89 +69,11 @@ int main(int argc, char** argv) {
 			}
 		}
 
-		i++;
-
-		if (i % time == 0) {
-			if (phase == PHASE_POINTS) {
-				divided = divide_by_median(points);
-				points_left = divided.first;
-				points_right = divided.second;
-				phase++;
-			}
-			else if (phase == PHASE_DIVIDE) {
-				left = convex_hull_bruteforce(points_left);
-				right = convex_hull_bruteforce(points_right);
-				sort_by_polar_coords(left);
-				sort_by_polar_coords(right);
-				phase++;
-			}
-			else if (phase == PHASE_CONQUER) {
-				l = find_rightmost(left);
-				r = find_leftmost(right);
-
-				top_l = l;
-				top_r = r;
-				bot_l = l;
-				bot_r = r;
-
-				phase++;
-			}
-			else if (phase == PHASE_TANGENT) {
-				int ok = 2;
-
-				if (merge_step(left, right, top_l, top_r, 1))
-					ok--;
-
-				if (merge_step(left, right, bot_l, bot_r, -1))
-					ok--;
-
-				if (ok == 0) {
-					for (int i = top_l; ; i = (i + 1) % left.size()) {
-						result.push_back(left[i]);
-						if (i == bot_l)
-							break;
-					}
-					for (int i = bot_r; ; i = (i + 1) % right.size()) {
-						result.push_back(right[i]);
-						if (i == top_r)
-							break;
-					}
-
-					phase++;
-				}
-			}
-		}
-
 		SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
 		SDL_RenderClear(rend);
 
-		if (phase == PHASE_POINTS) {
-			draw_points(rend, points, { 100, 100, 100, 200 }, Vec2(4, 4));
-		}
-		else if (phase == PHASE_DIVIDE) {
-			draw_points(rend, points, { 100, 100, 100, 100 }, Vec2(2, 2));
-			draw_points(rend, points_left, { 255, 100, 100, 255 }, Vec2(4, 4));
-			draw_points(rend, points_right, { 100, 255, 100, 255 }, Vec2(4, 4));
-		}
-		else if (phase == PHASE_CONQUER) {
-			draw_points(rend, left, { 255, 100, 100, 255 }, Vec2(4, 4));
-			draw_polygon(rend, left, { 255, 100, 100, 128 });
-			draw_points(rend, right, { 100, 255, 100, 255 }, Vec2(4, 4));
-			draw_polygon(rend, right, { 100, 255, 100, 128 });
-		}
-		else if (phase == PHASE_TANGENT) {
-			draw_points(rend, left, { 255, 100, 100, 255 }, Vec2(4, 4));
-			draw_polygon(rend, left, { 255, 100, 100, 128 });
-			draw_points(rend, right, { 100, 255, 100, 255 }, Vec2(4, 4));
-			draw_polygon(rend, right, { 100, 255, 100, 128 });
-
-			draw_line(rend, left[top_l], right[top_r], { 255, 255, 0, 255 });
-			draw_line(rend, left[bot_l], right[bot_r], { 0, 255, 255, 255 });
-		}
-		else if (phase == PHASE_MERGE) {
-			draw_points(rend, result, { 255, 255, 255, 255 }, Vec2(4, 4));
-			draw_polygon(rend, result, { 255, 255, 255, 255 });
-		}
+		draw_points(rend, points, { 255, 255, 255, 128 }, Vec2(4, 4));
+		draw_polygon(rend, hull, { 255, 0, 0, 255 });
 
 		SDL_RenderPresent(rend);
 	}

@@ -247,11 +247,13 @@
     <ClInclude Include="include\SDL2\SDL_vulkan.h" />
     <ClInclude Include="src\convex_hull.h" />
     <ClInclude Include="src\mathutil.h" />
+    <ClInclude Include="src\rendutil.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\convex_hull.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mathutil.cpp" />
+    <ClCompile Include="src\rendutil.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
