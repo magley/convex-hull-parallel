@@ -21,7 +21,7 @@ using namespace tbb;
 vector<Vec2> generate_points() {
 	vector<Vec2> points;
 
-	for (int i = 0; i < 100; i++) {
+	for (int i = 0; i < 800; i++) {
 		Vec2 p;
 		const int margin = 75;
 		p.x = random_range(margin, WIN_SIZE - margin);
@@ -68,15 +68,17 @@ int main(int argc, char** argv) {
 
 	vector<Vec2> points = generate_points();
 
+	tick_count time_parallel_start = tick_count::now();
+	vector<Vec2> hull_parallel = get_hull_parallel(points);
+	tick_count time_parallel_end = tick_count::now();
+	cout << "Parallel: " << (time_parallel_end - time_parallel_start).seconds() << "s\n";
+
+
 	tick_count time_serial_start = tick_count::now();
 		vector<Vec2> hull = get_hull(points);
 	tick_count time_serial_end = tick_count::now();
-	cout << (time_serial_end - time_serial_start).seconds() << "s\n";
+	cout << "Serial:   " << (time_serial_end - time_serial_start).seconds() << "s\n";
 
-	tick_count time_parallel_start = tick_count::now();
-		vector<Vec2> hull_parallel = get_hull_parallel(points);
-	tick_count time_parallel_end = tick_count::now();
-	cout << (time_parallel_end - time_parallel_start).seconds() << "s\n";
 
 	while (running) {
 		while (SDL_PollEvent(&ev)) {
@@ -88,9 +90,11 @@ int main(int argc, char** argv) {
 		SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
 		SDL_RenderClear(rend);
 
-		draw_points(rend, points, { 255, 255, 255, 64 }, Vec2(4, 4));
-		draw_polygon(rend, hull, { 255, 0, 0, 255 });
+		draw_points(rend, points, { 255, 255, 255, 32 }, Vec2(4, 4));
+		draw_points(rend, hull_parallel, { 255, 255, 255, 128 }, Vec2(4, 4));
+		//draw_polygon(rend, hull, { 255, 0, 0, 255 });
 		draw_polygon(rend, hull_parallel, { 0, 255, 255, 200 });
+
 
 		SDL_RenderPresent(rend);
 	}

@@ -5,12 +5,12 @@
 using namespace std;
 
 static bool same_side(Vec2 A, Vec2 B, const vector<Vec2>& points) {
-	bool should_be = side(A, B, points[0]) > 0;
+	bool should_be = side(A, B, points[0]) > EPSILON;
 	for (int i = 1; i < points.size(); i++) {
 		if (points[i] == A || points[i] == B)
 			continue;
 
-		if ((side(A, B, points[i]) > 0) != should_be)
+		if ((side(A, B, points[i]) > EPSILON) != should_be)
 			return false;
 	}
 	return true;
@@ -40,14 +40,14 @@ static bool merge_step(vector<Vec2>& left, vector<Vec2>& right, int& l, int& r, 
 
 	int s = 0;
 	s = side(left[l], right[r], left[(int)(left.size() + l + tangent_side) % (int)left.size()]);
-	if (s * tangent_side >= 0) {
+	if (s * tangent_side >= EPSILON) {
 		result++;
 	}
 	else {
 		l = (int)(left.size() + l + tangent_side) % (int)left.size();
 	}
 	s = side(left[l], right[r], right[(int)(right.size() + r - tangent_side) % (int)right.size()]);
-	if (s * tangent_side >= 0) {
+	if (s * tangent_side >= EPSILON) {
 		result++;
 	}
 	else {
@@ -138,10 +138,14 @@ vector<Vec2> convex_hull_bruteforce(const vector<Vec2>& points) {
 	return result;
 }
 
+#include <iostream>
+
+#define CUTOFF 100
+
 vector<Vec2> convex_hull_divide_and_conquer(const vector<Vec2>& points) {
 	// Base
 
-	if (points.size() <= 6) {
+	if (points.size() <= CUTOFF) {
 		return convex_hull_bruteforce(points);
 	}
 
@@ -160,6 +164,7 @@ vector<Vec2> convex_hull_divide_and_conquer(const vector<Vec2>& points) {
 
 	// Merge
 
+	cout << "OK " << points.size() << endl;
 	return merge_convex(left, right);
 }
 
@@ -169,7 +174,7 @@ using namespace tbb;
 std::vector<Vec2> convex_hull_divide_and_conquer_parallel(const vector<Vec2>& points) {
 	// Base
 
-	if (points.size() <= 6) {
+	if (points.size() <= CUTOFF) {
 		return convex_hull_bruteforce(points);
 	}
 

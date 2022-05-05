@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 
+#define EPSILON 0.0000001
+
 struct Vec2 {
 	double x = 0, y = 0;
 	Vec2() { ; }
