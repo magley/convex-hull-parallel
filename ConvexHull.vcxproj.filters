@@ -19,6 +19,9 @@
     <Filter Include="Header Files\SDL">
       <UniqueIdentifier>{60db3eb0-d8e9-4a6d-a835-983648d68fcf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="res">
+      <UniqueIdentifier>{52a80413-5c27-4939-a4b5-c0a6c1a2f42a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="lib\zlib1.dll">
@@ -40,6 +43,9 @@
   <ItemGroup>
     <Text Include="lib\LICENSE.png.txt">
       <Filter>lib</Filter>
+    </Text>
+    <Text Include="res\input_file_01.txt">
+      <Filter>res</Filter>
     </Text>
   </ItemGroup>
   <ItemGroup>
@@ -324,5 +330,10 @@
     <ClCompile Include="src\rendutil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\img_test.png">
+      <Filter>res</Filter>
+    </Image>
   </ItemGroup>
 </Project>

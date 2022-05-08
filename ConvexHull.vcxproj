@@ -157,6 +157,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="lib\LICENSE.png.txt" />
+    <Text Include="res\input_file_01.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\SDL2\begin_code.h" />
@@ -254,6 +255,9 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mathutil.cpp" />
     <ClCompile Include="src\rendutil.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\img_test.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
