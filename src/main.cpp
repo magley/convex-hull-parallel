@@ -6,8 +6,6 @@
 #include <map>
 #include <algorithm>
 #include "tbb/tbb.h"
-#include "tbb/parallel_for.h"
-#include "tbb/parallel_reduce.h"
 #include "tbb/tick_count.h"
 #include <cassert>
 
@@ -83,13 +81,13 @@ vector<Vec2> generate_points(int num_of_points) {
 
 vector<Vec2> get_hull(const vector<Vec2>& points, int cutoff) {
 	vector<Vec2> hull = convex_hull_divide_and_conquer(points, cutoff);
-	sort_by_polar_coords(hull);
+	sort_by_polar_coords(hull, false);
 	return hull;
 }
 
 vector<Vec2> get_hull_parallel(const vector<Vec2>& points, int cutoff) {
 	vector<Vec2> hull = convex_hull_divide_and_conquer_parallel(points, cutoff);
-	sort_by_polar_coords(hull);
+	sort_by_polar_coords(hull, true);
 	return hull;
 }
 
@@ -166,7 +164,7 @@ int main(int argc, char** argv) {
 	int t = time(NULL);
 	srand(t);
 
-	vector<Vec2> points = generate_points("res/input_file_01.txt");
+	vector<Vec2> points = generate_points("res/input_file_06.txt");
 	vector<Vec2> hull = initiate(points);
 
 	while (running) {

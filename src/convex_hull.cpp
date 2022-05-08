@@ -1,7 +1,11 @@
 #include "convex_hull.h"
 #include <algorithm>
 #include <set>
+#include "tbb/tbb.h"
+#include "tbb/task_group.h"
+#include "tbb/parallel_sort.h"
 
+using namespace tbb;
 using namespace std;
 
 static bool same_side(Vec2 A, Vec2 B, const vector<Vec2>& points) {
@@ -57,7 +61,7 @@ static bool merge_step(vector<Vec2>& left, vector<Vec2>& right, int& l, int& r, 
 	return result == 2;
 }
 
-static std::vector<Vec2> merge_convex(std::vector<Vec2>& left, std::vector<Vec2>& right) {
+static std::vector<Vec2> merge_convex(const std::vector<Vec2>& left, const std::vector<Vec2>& right) {
 	const int l = find_rightmost(left);
 	const int r = find_leftmost(right);
 	int top_l = l;
@@ -104,7 +108,7 @@ static std::pair<std::vector<Vec2>, std::vector<Vec2>> divide_by_median(const st
 	return std::make_pair(left, right);
 }
 
-void sort_by_polar_coords(std::vector<Vec2>& points) {
+void sort_by_polar_coords(std::vector<Vec2>& points, bool parallel) {
 	Vec2 reference = Vec2(0, 0);
 	for (int i = 0; i < points.size(); i++) {
 		reference.x += points[i].x;
@@ -113,9 +117,16 @@ void sort_by_polar_coords(std::vector<Vec2>& points) {
 	reference.x /= points.size();
 	reference.y /= points.size();
 
-	sort(points.begin(), points.end(), [reference](const Vec2& A, const Vec2& B) {
-		return A.get_angle_between(reference) > B.get_angle_between(reference);
+	if (parallel) {
+		parallel_sort(points.begin(), points.end(), [reference](const Vec2& A, const Vec2& B) {
+			return A.get_angle_between(reference) > B.get_angle_between(reference);
 		});
+	}
+	else {
+		sort(points.begin(), points.end(), [reference](const Vec2& A, const Vec2& B) {
+			return A.get_angle_between(reference) > B.get_angle_between(reference);
+		});
+	}
 }
 
 vector<Vec2> convex_hull_bruteforce(const vector<Vec2>& points) {
@@ -138,8 +149,6 @@ vector<Vec2> convex_hull_bruteforce(const vector<Vec2>& points) {
 	return result;
 }
 
-#include <iostream>
-
 vector<Vec2> convex_hull_divide_and_conquer(const vector<Vec2>& points, int cutoff) {
 	// Base
 
@@ -157,16 +166,13 @@ vector<Vec2> convex_hull_divide_and_conquer(const vector<Vec2>& points, int cuto
 
 	vector<Vec2> left = convex_hull_divide_and_conquer(points_left, cutoff);
 	vector<Vec2> right = convex_hull_divide_and_conquer(points_right, cutoff);
-	sort_by_polar_coords(left);
-	sort_by_polar_coords(right);
+	sort_by_polar_coords(left, false);
+	sort_by_polar_coords(right, false);
 
 	// Merge
 
 	return merge_convex(left, right);
 }
-
-#include "tbb/task_group.h"
-using namespace tbb;
 
 std::vector<Vec2> convex_hull_divide_and_conquer_parallel(const vector<Vec2>& points, int cutoff) {
 	// Base
@@ -188,12 +194,12 @@ std::vector<Vec2> convex_hull_divide_and_conquer_parallel(const vector<Vec2>& po
 
 	g.run([&]() {
 		left = convex_hull_divide_and_conquer_parallel(points_left, cutoff);
-		sort_by_polar_coords(left);
-		});
+		sort_by_polar_coords(left, true);
+	});
 	g.run([&]() {
 		right = convex_hull_divide_and_conquer_parallel(points_right, cutoff);
-		sort_by_polar_coords(right);
-		});
+		sort_by_polar_coords(right, true);
+	});
 
 	g.wait();
 
