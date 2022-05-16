@@ -249,12 +249,16 @@
     <ClInclude Include="src\convex_hull.h" />
     <ClInclude Include="src\mathutil.h" />
     <ClInclude Include="src\rendutil.h" />
+    <ClInclude Include="src\test.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\convex_hull.cpp" />
+    <ClCompile Include="src\convec_hull_serial.cpp" />
+    <ClCompile Include="src\convex_hull_common.cpp" />
+    <ClCompile Include="src\convex_hull_parallel.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mathutil.cpp" />
     <ClCompile Include="src\rendutil.cpp" />
+    <ClCompile Include="src\test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\img_test.png" />

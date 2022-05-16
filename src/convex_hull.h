@@ -1,10 +1,21 @@
 #pragma once
 
 #include "mathutil.h"
-#include <utility>
 
-std::pair<std::vector<Vec2>, std::vector<Vec2>> divide_by_median(const std::vector<Vec2>& points);
-std::vector<Vec2> convex_hull_bruteforce(const std::vector<Vec2>& points);
-void sort_by_polar_coords(std::vector<Vec2>& points, bool parallel);
-std::vector<Vec2> convex_hull_divide_and_conquer(const std::vector<Vec2>& points, int cutoff);
-std::vector<Vec2> convex_hull_divide_and_conquer_parallel(const std::vector<Vec2>& points, int cutoff);
+namespace common {
+	std::pair<std::vector<Vec2>, std::vector<Vec2>> divide_by_median(const std::vector<Vec2>& points);
+	bool merge_step(std::vector<Vec2>& left, std::vector<Vec2>& right, int& l, int& r, int tangent_side);
+}
+
+namespace serial {
+	std::vector<Vec2> merge_convex(std::vector<Vec2>& left, std::vector<Vec2>& right);
+	void sort_by_polar_coords(std::vector<Vec2>& points);
+	std::vector<Vec2> convex_hull_naive(const std::vector<Vec2>& points);
+	std::vector<Vec2> convex_hull(const std::vector<Vec2>& points, int cutoff);
+}
+
+namespace parallel {
+	std::vector<Vec2> merge_convex(std::vector<Vec2>& left, std::vector<Vec2>& right);
+	void sort_by_polar_coords(std::vector<Vec2>& points);
+	std::vector<Vec2> convex_hull(const std::vector<Vec2>& points, int cutoff);
+}

@@ -21,26 +21,6 @@ int random_range(int mini, int maxi) {
 	return rand() % (maxi + 1 - mini) + mini;
 }
 
-int find_topmost(const vector<Vec2>& arr) {
-	int k = -1;
-	for (int i = 0; i < arr.size(); i++) {
-		if (k == -1 || arr[i].y < arr[k].y) {
-			k = i;
-		}
-	}
-	return k;
-}
-
-int find_bottommost(const vector<Vec2>& arr) {
-	int k = -1;
-	for (int i = 0; i < arr.size(); i++) {
-		if (k == -1 || arr[i].y > arr[k].y) {
-			k = i;
-		}
-	}
-	return k;
-}
-
 int find_leftmost(const vector<Vec2>& arr) {
 	int k = 0;
 	for (int i = 0; i < arr.size(); i++) {
@@ -62,10 +42,5 @@ int find_rightmost(const vector<Vec2>& arr) {
 }
 
 float side(Vec2 A, Vec2 B, Vec2 P) {
-	//return -(
-	//	((B.y - A.y) * (P.x - B.x))
-	//		-
-	//	((P.y - B.y) * (B.x - A.x))
-	//);
 	return ((B.x - A.x) * (P.y - A.y) - (B.y - A.y) * (P.x - A.x));
 }

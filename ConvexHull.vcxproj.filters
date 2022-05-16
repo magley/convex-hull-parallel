@@ -316,6 +316,9 @@
     <ClInclude Include="src\rendutil.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\test.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -324,10 +327,19 @@
     <ClCompile Include="src\mathutil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\convex_hull.cpp">
+    <ClCompile Include="src\rendutil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendutil.cpp">
+    <ClCompile Include="src\convec_hull_serial.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\convex_hull_common.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\convex_hull_parallel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
