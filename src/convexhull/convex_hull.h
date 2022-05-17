@@ -1,6 +1,6 @@
 #pragma once
 
-#include "mathutil.h"
+#include "utility/mathutil.h"
 
 namespace common {
 	std::pair<std::vector<Vec2>, std::vector<Vec2>> divide_by_median(const std::vector<Vec2>& points);

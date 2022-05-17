@@ -7,13 +7,11 @@
 #include <cassert>
 
 #include "tbb/tick_count.h"
-#include "convex_hull.h"
-#include "rendutil.h"
+#include "convexhull/convex_hull.h"
+#include "render/rendutil.h"
 
 using namespace std;
 using namespace tbb;
-
-
 
 vector<Vec2> generate_points(string filename) {
 	ifstream f(filename);

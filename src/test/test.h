@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "mathutil.h"
+#include "utility/mathutil.h"
 
 #define WIN_SIZE 800
 

@@ -1,8 +1,8 @@
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
 #include <ctime>
-#include "test.h"
-#include "rendutil.h"
+#include "test/test.h"
+#include "render/rendutil.h"
 
 using namespace std;
 

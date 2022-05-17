@@ -22,6 +22,18 @@
     <Filter Include="res">
       <UniqueIdentifier>{52a80413-5c27-4939-a4b5-c0a6c1a2f42a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\utility">
+      <UniqueIdentifier>{bd8508b9-230b-46f4-a0b2-76bdf9ed14fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\test">
+      <UniqueIdentifier>{a9afdd45-ffcf-4bfb-a2bd-697bb90524d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\render">
+      <UniqueIdentifier>{53d39fb9-f9dd-4342-9180-50b1e8650eb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\convexhull">
+      <UniqueIdentifier>{74e457c8-e603-476d-bdb9-479bd5b56fb8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="lib\zlib1.dll">
@@ -307,40 +319,40 @@
     <ClInclude Include="include\SDL2\SDL_vulkan.h">
       <Filter>Header Files\SDL</Filter>
     </ClInclude>
-    <ClInclude Include="src\mathutil.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="src\convexhull\convex_hull.h">
+      <Filter>Source Files\convexhull</Filter>
     </ClInclude>
-    <ClInclude Include="src\convex_hull.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="src\render\rendutil.h">
+      <Filter>Source Files\render</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendutil.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="src\utility\mathutil.h">
+      <Filter>Source Files\utility</Filter>
     </ClInclude>
-    <ClInclude Include="src\test.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="src\test\test.h">
+      <Filter>Source Files\test</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\mathutil.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\convexhull\convex_hull_common.cpp">
+      <Filter>Source Files\convexhull</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendutil.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\convexhull\convex_hull_parallel.cpp">
+      <Filter>Source Files\convexhull</Filter>
     </ClCompile>
-    <ClCompile Include="src\convec_hull_serial.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\convexhull\convex_hull_serial.cpp">
+      <Filter>Source Files\convexhull</Filter>
     </ClCompile>
-    <ClCompile Include="src\convex_hull_common.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\render\rendutil.cpp">
+      <Filter>Source Files\render</Filter>
     </ClCompile>
-    <ClCompile Include="src\convex_hull_parallel.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\utility\mathutil.cpp">
+      <Filter>Source Files\utility</Filter>
     </ClCompile>
-    <ClCompile Include="src\test.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\test\test.cpp">
+      <Filter>Source Files\test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
