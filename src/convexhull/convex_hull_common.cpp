@@ -15,23 +15,24 @@ pair<vector<Vec2>, vector<Vec2>> common::divide_by_median(const vector<Vec2>& po
 
 
 bool common::merge_step(vector<Vec2>& left, vector<Vec2>& right, int& l, int& r, int tangent_side) {
-	int result = 0;
+	bool okA = false, okB = false;
+	float s = 0;
 
-	int s = 0;
 	s = side(left[l], right[r], left[(int)(left.size() + l + tangent_side) % (int)left.size()]);
-	if (s * tangent_side >= EPSILON) {
-		result++;
+	if ((double)tangent_side * s >= EPSILON) {
+		okA = true;
 	}
 	else {
 		l = (int)(left.size() + l + tangent_side) % (int)left.size();
 	}
+
 	s = side(left[l], right[r], right[(int)(right.size() + r - tangent_side) % (int)right.size()]);
-	if (s * tangent_side >= EPSILON) {
-		result++;
+	if ((double)tangent_side * s >= EPSILON) {
+		okB = true;
 	}
 	else {
 		r = (int)(right.size() + r - tangent_side) % (int)right.size();
 	}
 
-	return result == 2;
+	return okA && okB;
 }

@@ -59,6 +59,27 @@
     <Text Include="res\input_file_01.txt">
       <Filter>res</Filter>
     </Text>
+    <Text Include="res\input_file_02.txt">
+      <Filter>res</Filter>
+    </Text>
+    <Text Include="res\input_file_03.txt">
+      <Filter>res</Filter>
+    </Text>
+    <Text Include="res\input_file_04.txt">
+      <Filter>res</Filter>
+    </Text>
+    <Text Include="res\input_file_05.txt">
+      <Filter>res</Filter>
+    </Text>
+    <Text Include="res\input_file_06.txt">
+      <Filter>res</Filter>
+    </Text>
+    <Text Include="res\input_file_07.txt">
+      <Filter>res</Filter>
+    </Text>
+    <Text Include="res\input_file_08.txt">
+      <Filter>res</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\SDL2\begin_code.h">

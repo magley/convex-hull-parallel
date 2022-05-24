@@ -42,21 +42,13 @@ static size_t RemoveDuplicatesKeepOrder(vector<T>& vec)
 vector<Vec2> serial::merge_convex(vector<Vec2>& left, vector<Vec2>& right) {
 	const int l = find_rightmost(left);
 	const int r = find_leftmost(right);
-	int top_l = l;
-	int top_r = r;
-	int bot_l = l;
-	int bot_r = r;
+	int top_l = l, top_r = r;
+	int bot_l = l, bot_r = r;
 
 	while (true) {
-		int ok = 2;
-
-		if (common::merge_step(left, right, top_l, top_r, 1))
-			ok--;
-
-		if (common::merge_step(left, right, bot_l, bot_r, -1))
-			ok--;
-
-		if (ok == 0)
+		bool foundTop = common::merge_step(left, right, top_l, top_r, 1);
+		bool foundBot = common::merge_step(left, right, bot_l, bot_r, -1);
+		if (foundTop && foundBot)
 			break;
 	}
 

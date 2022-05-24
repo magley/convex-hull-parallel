@@ -158,6 +158,13 @@
   <ItemGroup>
     <Text Include="lib\LICENSE.png.txt" />
     <Text Include="res\input_file_01.txt" />
+    <Text Include="res\input_file_02.txt" />
+    <Text Include="res\input_file_03.txt" />
+    <Text Include="res\input_file_04.txt" />
+    <Text Include="res\input_file_05.txt" />
+    <Text Include="res\input_file_06.txt" />
+    <Text Include="res\input_file_07.txt" />
+    <Text Include="res\input_file_08.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\SDL2\begin_code.h" />

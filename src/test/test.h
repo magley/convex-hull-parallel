@@ -12,10 +12,12 @@ struct stats_t {
 	double time_serial = 0;
 	double time_parallel = 0;
 	double speedup = 0;
+	int point_count = 0;
 
 	stats_t() {}
 
-	stats_t(int cutoff, double time_serial, double time_parallel) :
+	stats_t(int point_count, int cutoff, double time_serial, double time_parallel) :
+		point_count(point_count),
 		cutoff(cutoff),
 		time_serial(time_serial),
 		time_parallel(time_parallel),
@@ -24,18 +26,24 @@ struct stats_t {
 
 	void print_me() const {
 		std::cout
+			<< "====================================\n"
+			<< "points:  " << point_count << "\n"
 			<< "cutoff:  " << cutoff << "\n"
 			<< "serial:  " << time_serial << "\n"
 			<< "parallel:" << time_parallel << "\n"
 			<< "speedup: " << speedup << "\n"
-			<< "\n"
-			;
+		;
 	}
 };
+
+
+std::vector<stats_t> run_tests(const std::vector<Vec2>& points, std::vector<Vec2>& out_points);
+stats_t run_test(const std::vector<Vec2>& points, std::vector<Vec2>& out_points, int cutoff);
+
+
 
 std::vector<Vec2> generate_points(std::string filename);
 std::vector<Vec2> generate_points(int num_of_points);
 void output_points(const std::vector<Vec2>& points, std::string filename);
 std::vector<Vec2> get_hull(const std::vector<Vec2>& points, int cutoff);
 std::vector<Vec2> get_hull_parallel(const std::vector<Vec2>& points, int cutoff);
-std::vector<Vec2> perform_test(const std::vector<Vec2>& points);

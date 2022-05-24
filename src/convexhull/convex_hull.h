@@ -8,9 +8,9 @@ namespace common {
 }
 
 namespace serial {
+	std::vector<Vec2> convex_hull_naive(const std::vector<Vec2>& points);
 	std::vector<Vec2> merge_convex(std::vector<Vec2>& left, std::vector<Vec2>& right);
 	void sort_by_polar_coords(std::vector<Vec2>& points);
-	std::vector<Vec2> convex_hull_naive(const std::vector<Vec2>& points);
 	std::vector<Vec2> convex_hull(const std::vector<Vec2>& points, int cutoff);
 }
 

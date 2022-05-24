@@ -6,6 +6,10 @@
 
 using namespace std;
 
+
+string input_filename = "res/input_file_06.txt";
+int run_analysis = 1;
+
 int main(int argc, char** argv) {
 	SDL_Init(SDL_INIT_VIDEO);
 	IMG_Init(IMG_INIT_PNG);
@@ -26,11 +30,15 @@ int main(int argc, char** argv) {
 	SDL_Texture* tex_test = IMG_LoadTexture(rend, "res\\img_test.png");
 	SDL_Event ev;
 	bool running = true;
-	int t = time(NULL);
-	srand(t);
+	srand(time(NULL));
 
-	vector<Vec2> points = generate_points("res/input_file_06.txt");
-	vector<Vec2> hull = perform_test(points);
+	// ====================================================================================
+
+	const vector<Vec2> points = generate_points(input_filename);
+	vector<Vec2> hull;
+	vector<stats_t> stats = run_tests(points, hull);
+
+	// ====================================================================================
 
 	while (running) {
 		while (SDL_PollEvent(&ev)) {
@@ -42,9 +50,11 @@ int main(int argc, char** argv) {
 		SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
 		SDL_RenderClear(rend);
 
-		draw_points(rend, points, { 255, 255, 255, 128 }, Vec2(4, 4));
-		draw_points(rend, hull, { 255, 255, 255, 255 }, Vec2(4, 4));
-		draw_polygon(rend, hull, { 0, 255, 255, 255 });
+		//draw_points(rend, points, { 255, 255, 255, 128 }, Vec2(4, 4));
+		//draw_points(rend, hull, { 255, 255, 255, 255 }, Vec2(4, 4));
+		//draw_polygon(rend, hull, { 0, 255, 255, 255 });
+
+		draw_stats(rend, stats);
 
 		SDL_RenderPresent(rend);
 	}
