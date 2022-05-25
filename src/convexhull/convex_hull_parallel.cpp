@@ -61,6 +61,8 @@ vector<Vec2> parallel::merge_convex(vector<Vec2>& left, vector<Vec2>& right) {
 }
 
 vector<Vec2> parallel::convex_hull(const vector<Vec2>& points, int cutoff) {
+	if (cutoff < 8)
+		cutoff = 8;
 	if (points.size() <= cutoff) {
 		return serial::convex_hull_naive(points);
 	}

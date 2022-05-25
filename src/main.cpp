@@ -6,9 +6,12 @@
 
 using namespace std;
 
+string file_infix = "07";
 
-string input_filename = "res/input_file_06.txt";
-int run_analysis = 1;
+const string infile_prefix = "res/input_file_";
+const string outfile_prefix = "out/statistics_";
+string input_filename = infile_prefix + file_infix + ".txt";
+string output_filename = outfile_prefix + file_infix + ".txt";
 
 int main(int argc, char** argv) {
 	SDL_Init(SDL_INIT_VIDEO);
@@ -34,12 +37,17 @@ int main(int argc, char** argv) {
 
 	// ====================================================================================
 
-	const vector<Vec2> points = generate_points(5000);
+	const vector<Vec2> points = generate_points(input_filename);
+	//output_points(points, input_filename);
 	vector<Vec2> hull;
 	vector<stats_t> stats = run_tests(points, hull);
+	write_test_result_to_file(output_filename, stats);
 
-	Plot g(stats, 32);
-	int mouse_x, mouse_y;
+	stats_t best_parallel = stats[0];
+	for (stats_t& s : stats) {
+		if (s.time_parallel < best_parallel.time_parallel)
+			best_parallel = s;
+	}
 
 	// ====================================================================================
 
@@ -52,25 +60,12 @@ int main(int argc, char** argv) {
 
 		SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
 		SDL_RenderClear(rend);
-		SDL_GetMouseState(&mouse_x, &mouse_y);
 
-		//draw_points(rend, points, { 255, 255, 255, 128 }, Vec2(4, 4));
-		//draw_points(rend, hull, { 255, 255, 255, 255 }, Vec2(4, 4));
-		//draw_polygon(rend, hull, { 0, 255, 255, 255 });
+		draw_points(rend, points, { 255, 255, 255, 128 }, Vec2(4, 4));
+		draw_points(rend, hull, { 255, 255, 255, 255 }, Vec2(4, 4));
+		draw_polygon(rend, hull, { 0, 255, 255, 255 });
 
-		int best = g.get_best_parallel();
-		SDL_Rect r = g.get_column_rect(best);
-		SDL_SetRenderDrawColor(rend, 64, 64, 255, 32);
-		SDL_RenderFillRect(rend, &r);
-
-		int highlighted = g.get_at_mouse(Vec2(mouse_x, mouse_y));
-		r = g.get_column_rect(highlighted);
-		SDL_SetRenderDrawColor(rend, 255, 255, 64, 32);
-		SDL_RenderFillRect(rend, &r);
-
-		g.draw(rend);
-		draw_text(rend, tex_font, g.stats[highlighted], Vec2(0, 0));
-
+		draw_text(rend, tex_font, best_parallel, Vec2(0, 0));
 
 		SDL_RenderPresent(rend);
 	}

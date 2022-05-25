@@ -51,7 +51,7 @@ vector<Vec2> serial::merge_convex(vector<Vec2>& left, vector<Vec2>& right) {
 		if (foundTop && foundBot)
 			break;
 	}
-
+	
 	vector<Vec2> result;
 
 	for (int i = top_l; ; i = (i + 1) % left.size()) {
@@ -59,6 +59,7 @@ vector<Vec2> serial::merge_convex(vector<Vec2>& left, vector<Vec2>& right) {
 		if (i == bot_l)
 			break;
 	}
+
 	for (int i = bot_r; ; i = (i + 1) % right.size()) {
 		result.push_back(right[i]);
 		if (i == top_r)
@@ -103,7 +104,8 @@ vector<Vec2> serial::convex_hull_naive(const vector<Vec2>& points) {
 }
 
 vector<Vec2> serial::convex_hull(const vector<Vec2>& points, int cutoff) {
-
+	if (cutoff < 8)
+		cutoff = 8;
 	if (points.size() <= cutoff) {
 		return serial::convex_hull_naive(points);
 	}

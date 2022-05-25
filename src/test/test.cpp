@@ -18,8 +18,8 @@ std::vector<stats_t> run_tests(const std::vector<Vec2>& points, std::vector<Vec2
 
 	int cutoff_min, cutoff_max, cutoff_step;
 
-	cutoff_min = 6 + (points.size() / 350);
-	cutoff_max = (int)std::max(10.0, points.size() * 0.025);
+	cutoff_min = 8;
+	cutoff_max = (int)std::max(10.0, points.size() * 0.2);
 
 	if (cutoff_max < cutoff_min)
 		cutoff_max = cutoff_min;
@@ -105,4 +105,12 @@ vector<Vec2> get_hull_parallel(const vector<Vec2>& points, int cutoff) {
 	vector<Vec2> hull = parallel::convex_hull(points, cutoff);
 	parallel::sort_by_polar_coords(hull);
 	return hull;
+}
+
+void write_test_result_to_file(std::string fname, const std::vector<stats_t>& stats) {
+	ofstream f = ofstream(fname);
+	f << stats[0].point_count << "\n";
+	for (auto& stat : stats) {
+		f << stat.cutoff << " " << stat.time_serial << " " << stat.time_parallel << " " << stat.speedup << "\n";
+	}
 }

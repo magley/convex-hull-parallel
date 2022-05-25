@@ -39,7 +39,7 @@ struct stats_t {
 
 std::vector<stats_t> run_tests(const std::vector<Vec2>& points, std::vector<Vec2>& out_points);
 stats_t run_test(const std::vector<Vec2>& points, std::vector<Vec2>& out_points, int cutoff);
-
+void write_test_result_to_file(std::string fname, const std::vector<stats_t>& stats);
 
 
 std::vector<Vec2> generate_points(std::string filename);
