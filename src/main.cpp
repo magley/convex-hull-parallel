@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
 
 	// ====================================================================================
 
-	const vector<Vec2> points = generate_points(input_filename);
+	const vector<Vec2> points = generate_points(5000);
 	vector<Vec2> hull;
 	vector<stats_t> stats = run_tests(points, hull);
 

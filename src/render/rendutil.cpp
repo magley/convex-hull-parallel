@@ -62,7 +62,7 @@ void Plot::draw(SDL_Renderer* rend) {
 		x = 0 + i * (w / stats.size());
 		y = (stats[i].time_parallel / serial_max) * h;
 		point_pos = Vec2(pos.x + x, pos.y - y);
-		draw_point(rend, point_pos, { 0,0,255,255 }, Vec2(column_width, column_width));
+		draw_point(rend, point_pos, { 0,255,255,255 }, Vec2(column_width, column_width));
 
 		x = 0 + i * (w / stats.size());
 		y = (stats[i].speedup / speedup_max) * h;
@@ -76,11 +76,6 @@ void Plot::draw(SDL_Renderer* rend) {
 int Plot::get_at_mouse(Vec2 mouse_pos) {
 	int left = pos.x;
 	int right = left + w;
-
-	if (mouse_pos.x < left)
-		mouse_pos.x = left;
-	if (mouse_pos.x > right)
-		mouse_pos.x = right;
 
 	int column_width = (right - left) / (stats.size());
 	int col_margin = column_width / 2;
@@ -187,7 +182,7 @@ void draw_text(SDL_Renderer* rend, SDL_Texture* tex, stats_t stat, Vec2 pos) {
 		pos.y += FONT_CH_H;
 		stringstream ss;
 		ss << "parallel: " << stat.time_parallel << "s";
-		draw_text(rend, tex, ss.str(), pos, { 0,0,255,255 }, { 0, 0, 0 ,0 });
+		draw_text(rend, tex, ss.str(), pos, { 0,255,255,255 }, { 0, 0, 0 ,0 });
 	}
 	{
 		pos.y += FONT_CH_H;

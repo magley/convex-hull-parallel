@@ -18,8 +18,8 @@ std::vector<stats_t> run_tests(const std::vector<Vec2>& points, std::vector<Vec2
 
 	int cutoff_min, cutoff_max, cutoff_step;
 
-	cutoff_min = 6;
-	cutoff_max = (int)std::max(10.0, points.size() * 0.1);
+	cutoff_min = 6 + (points.size() / 350);
+	cutoff_max = (int)std::max(10.0, points.size() * 0.025);
 
 	if (cutoff_max < cutoff_min)
 		cutoff_max = cutoff_min;
@@ -42,16 +42,18 @@ std::vector<stats_t> run_tests(const std::vector<Vec2>& points, std::vector<Vec2
 }
 
 stats_t run_test(const std::vector<Vec2>& points, std::vector<Vec2>& out_points, int cutoff) {
-	cout << "Testing " << cutoff << "...\n";
+	cout << "Testing " << cutoff << " ";
 	tick_count time_parallel_start = tick_count::now();
 	out_points = get_hull_parallel(points, cutoff);
 	tick_count time_parallel_end = tick_count::now();
 	double t_parallel = (time_parallel_end - time_parallel_start).seconds();
+	cout << "[parallel OK] ";
 
 	tick_count time_serial_start = tick_count::now();
 	get_hull(points, cutoff);
 	tick_count time_serial_end = tick_count::now();
 	double t_serial = (time_serial_end - time_serial_start).seconds();
+	cout << "[serial OK]\n";
 
 	double speedup = t_serial / t_parallel;
 

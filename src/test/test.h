@@ -5,7 +5,7 @@
 #include <string>
 #include "utility/mathutil.h"
 
-#define WIN_SIZE 800
+#define WIN_SIZE 900
 
 struct stats_t {
 	int cutoff = 0;
