@@ -13,6 +13,24 @@
 using namespace std;
 using namespace tbb;
 
+std::vector<stats_t> run_speedup_test(int minPoints, int maxPoints, int step) {
+	vector<stats_t> statistics;
+	for (int i = minPoints; i < maxPoints; i += step) {
+		vector<Vec2> pts = generate_points(i);
+		vector<Vec2> _;
+		const int cutoff = pts.size() * 0.2;
+		statistics.push_back(stats_t(run_test(pts, _, cutoff)));
+	}
+	return statistics;
+}
+
+void write_speedup_result_to_file(std::string fname, const std::vector<stats_t>& stats) {
+	ofstream f = ofstream(fname);
+	for (auto& stat : stats) {
+		f << stat.point_count << " " << stat.cutoff << " " << stat.time_serial << " " << stat.time_parallel << " " << stat.speedup << "\n";
+	}
+}
+
 std::vector<stats_t> run_tests(const std::vector<Vec2>& points, std::vector<Vec2>& out_points) {
 	std::vector<stats_t> statistics;
 
@@ -42,7 +60,7 @@ std::vector<stats_t> run_tests(const std::vector<Vec2>& points, std::vector<Vec2
 }
 
 stats_t run_test(const std::vector<Vec2>& points, std::vector<Vec2>& out_points, int cutoff) {
-	cout << "Testing " << cutoff << " ";
+	cout << "point.size=" << points.size() << ", cutoff=" << cutoff << " ";
 	tick_count time_parallel_start = tick_count::now();
 	out_points = get_hull_parallel(points, cutoff);
 	tick_count time_parallel_end = tick_count::now();

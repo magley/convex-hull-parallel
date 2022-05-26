@@ -12,6 +12,7 @@ const string infile_prefix = "res/input_file_";
 const string outfile_prefix = "out/statistics_";
 string input_filename = infile_prefix + file_infix + ".txt";
 string output_filename = outfile_prefix + file_infix + ".txt";
+string output_filename_speedup = "out/speedup.txt";
 
 int main(int argc, char** argv) {
 	SDL_Init(SDL_INIT_VIDEO);
@@ -41,7 +42,7 @@ int main(int argc, char** argv) {
 	//output_points(points, input_filename);
 	vector<Vec2> hull;
 	vector<stats_t> stats = run_tests(points, hull);
-	write_test_result_to_file(output_filename, stats);
+	//write_test_result_to_file(output_filename, stats);
 
 	stats_t best_parallel = stats[0];
 	for (stats_t& s : stats) {
@@ -49,6 +50,8 @@ int main(int argc, char** argv) {
 			best_parallel = s;
 	}
 
+	//write_speedup_result_to_file(output_filename_speedup, run_speedup_test(10, 10000, 1));
+	//return 0;
 	// ====================================================================================
 
 	while (running) {

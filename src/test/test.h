@@ -41,6 +41,9 @@ std::vector<stats_t> run_tests(const std::vector<Vec2>& points, std::vector<Vec2
 stats_t run_test(const std::vector<Vec2>& points, std::vector<Vec2>& out_points, int cutoff);
 void write_test_result_to_file(std::string fname, const std::vector<stats_t>& stats);
 
+std::vector<stats_t> run_speedup_test(int minPoints, int maxPoints, int step);
+void write_speedup_result_to_file(std::string fname, const std::vector<stats_t>& stats);
+
 
 std::vector<Vec2> generate_points(std::string filename);
 std::vector<Vec2> generate_points(int num_of_points);
