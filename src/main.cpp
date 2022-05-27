@@ -3,6 +3,7 @@
 #include <ctime>
 #include "test/test.h"
 #include "render/rendutil.h"
+#include "convexhull/convex_hull.h"
 
 using namespace std;
 
@@ -12,7 +13,7 @@ const string infile_prefix = "res/input_file_";
 const string outfile_prefix = "out/statistics_";
 string input_filename = infile_prefix + file_infix + ".txt";
 string output_filename = outfile_prefix + file_infix + ".txt";
-string output_filename_speedup = "out/speedup.txt";
+string output_filename_speedup = "out/speedup_cutoff50.txt";
 
 int main(int argc, char** argv) {
 	SDL_Init(SDL_INIT_VIDEO);
@@ -38,20 +39,43 @@ int main(int argc, char** argv) {
 
 	// ====================================================================================
 
-	const vector<Vec2> points = generate_points(input_filename);
-	//output_points(points, input_filename);
-	vector<Vec2> hull;
-	vector<stats_t> stats = run_tests(points, hull);
-	//write_test_result_to_file(output_filename, stats);
+	/*
+	for (int i = 10; i < 200; i++) {
+		const vector<Vec2> points = generate_points(input_filename);
+		//output_points(points, input_filename);
+		vector<Vec2> hull;
+		vector<stats_t> stats = run_tests(points, hull);
+		//write_test_result_to_file(output_filename, stats);
+
+		stats_t best_parallel = stats[0];
+		for (stats_t& s : stats) {
+			if (s.time_parallel < best_parallel.time_parallel)
+				best_parallel = s;
+		}
+
+		cout << i << " " << best_parallel.cutoff << "\n";
+	}
+
+	return 0;
+
+
 
 	stats_t best_parallel = stats[0];
 	for (stats_t& s : stats) {
 		if (s.time_parallel < best_parallel.time_parallel)
 			best_parallel = s;
 	}
-
+	*/
 	//write_speedup_result_to_file(output_filename_speedup, run_speedup_test(10, 10000, 1));
 	//return 0;
+
+	const vector<Vec2> points = generate_points(input_filename);
+	//output_points(points, input_filename);
+	vector<Vec2> hull;
+	//run_test(points, hull, 50);
+
+	hull = serial::convex_hull_graham_scan(points);
+	
 	// ====================================================================================
 
 	while (running) {
@@ -68,7 +92,7 @@ int main(int argc, char** argv) {
 		draw_points(rend, hull, { 255, 255, 255, 255 }, Vec2(4, 4));
 		draw_polygon(rend, hull, { 0, 255, 255, 255 });
 
-		draw_text(rend, tex_font, best_parallel, Vec2(0, 0));
+		//draw_text(rend, tex_font, best_parallel, Vec2(0, 0));
 
 		SDL_RenderPresent(rend);
 	}
@@ -79,4 +103,5 @@ int main(int argc, char** argv) {
 	SDL_Quit();
 
 	return 0;
+
 }

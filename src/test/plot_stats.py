@@ -93,7 +93,7 @@ def plot_speedup():
     poly_y = np.poly1d(poly)(x)
     plt.grid(color='lightgray', linestyle='dashed', linewidth=1, which='both')
     plt.minorticks_on()
-    plt.scatter(x, y, color="black", label="regression", s=1)
+    plt.scatter(x, y, color="black", label="points", s=1)
 
     plt.xlabel("point count")
     plt.ylabel("speedup")
@@ -101,7 +101,27 @@ def plot_speedup():
     plt.savefig(str(Path(__file__).parent / output_dir) + "\\" + output_prefix + "speedup.png", bbox_inches="tight")
     plt.clf()
 
+def plot_best_cutoff():
+    data = []
+    with open(str(path) + "\\best_cutoff.txt") as f:
+        for i, line in enumerate(f):
+            parts = line.split()
+            d = {}
+            d['points'] = int(parts[0])
+            d['best_cutoff'] = int(parts[1])
+            data.append(d)
+    x = [d['points'] for d in data]
+    y = [d['best_cutoff'] for d in data]
+
+    plt.minorticks_on()
+    plt.scatter(x, y, color="black", label="regression", s=1)
+    plt.xlabel("point count")
+    plt.ylabel("best cutoff value")  
+    plt.savefig(str(Path(__file__).parent / output_dir) + "\\" + output_prefix + "best_cutoff.png", bbox_inches="tight")
+    plt.clf()
+
 
 
 #plot_test_case()
 plot_speedup()
+#plot_best_cutoff()

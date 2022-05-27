@@ -13,7 +13,6 @@ pair<vector<Vec2>, vector<Vec2>> common::divide_by_median(const vector<Vec2>& po
 	return make_pair(left, right);
 }
 
-
 bool common::merge_step(vector<Vec2>& left, vector<Vec2>& right, int& l, int& r, int tangent_side) {
 	bool okA = false, okB = false;
 	float s = 0;
@@ -35,4 +34,15 @@ bool common::merge_step(vector<Vec2>& left, vector<Vec2>& right, int& l, int& r,
 	}
 
 	return okA && okB;
+}
+
+Vec2 common::get_center(std::vector<Vec2>& points) {
+	Vec2 center = Vec2(0, 0);
+	for (int i = 0; i < points.size(); i++) {
+		center.x += points[i].x;
+		center.y += points[i].y;
+	}
+	center.x /= points.size();
+	center.y /= points.size();
+	return center;
 }

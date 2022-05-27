@@ -6,15 +6,7 @@
 using namespace std;
 using namespace tbb;
 
-void parallel::sort_by_polar_coords(vector<Vec2>& points) {
-	Vec2 reference = Vec2(0, 0);
-	for (int i = 0; i < points.size(); i++) {
-		reference.x += points[i].x;
-		reference.y += points[i].y;
-	}
-	reference.x /= points.size();
-	reference.y /= points.size();
-
+void parallel::sort_by_polar_coords(vector<Vec2>& points, Vec2 reference) {
 	parallel_sort(points.begin(), points.end(), [reference](const Vec2& A, const Vec2& B) {
 		return A.get_angle_between(reference) > B.get_angle_between(reference);
 	});
@@ -76,11 +68,11 @@ vector<Vec2> parallel::convex_hull(const vector<Vec2>& points, int cutoff) {
 
 	g.run([&]() {
 		left = parallel::convex_hull(points_left, cutoff);
-		parallel::sort_by_polar_coords(left);
+		parallel::sort_by_polar_coords(left, common::get_center(left));
 		});
 	g.run([&]() {
 		right = parallel::convex_hull(points_right, cutoff);
-		parallel::sort_by_polar_coords(right);
+		parallel::sort_by_polar_coords(right, common::get_center(right));
 		});
 
 	g.wait();
