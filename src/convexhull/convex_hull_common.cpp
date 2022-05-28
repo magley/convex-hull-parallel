@@ -4,8 +4,8 @@
 using namespace std;
 
 pair<vector<Vec2>, vector<Vec2>> common::divide_by_median(const vector<Vec2>& points) {
+	// pre-condition: points are sorted by using the [](Vec2& p1, Vec2& p2) {return p1.x < p2.x; } predicate.
 	vector<Vec2> sorted_by_x = points;
-	sort(sorted_by_x.begin(), sorted_by_x.end(), [](Vec2& p1, Vec2& p2) {return p1.x < p2.x; });
 	const int mid = sorted_by_x.size() / 2;
 	const vector<Vec2> left = vector<Vec2>(sorted_by_x.begin(), sorted_by_x.begin() + mid);
 	const vector<Vec2> right = vector<Vec2>(sorted_by_x.begin() + mid, sorted_by_x.end());

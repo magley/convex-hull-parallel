@@ -37,7 +37,7 @@ std::vector<stats_t> run_tests(const std::vector<Vec2>& points, std::vector<Vec2
 	int cutoff_min, cutoff_max, cutoff_step;
 
 	cutoff_min = 15;
-	cutoff_max = 100;//(int)std::max(10.0, points.size() * 0.01);
+	cutoff_max = 100;
 
 	if (cutoff_max < cutoff_min)
 		cutoff_max = cutoff_min;

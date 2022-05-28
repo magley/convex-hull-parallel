@@ -95,7 +95,7 @@ vector<Vec2> serial::convex_hull_naive(const vector<Vec2>& points) {
 	return result;
 }
 
-vector<Vec2> serial::convex_hull(const vector<Vec2>& points, int cutoff) {
+static vector<Vec2> convex_hull_recursion(const vector<Vec2>& points, int cutoff) {
 	if (cutoff < 8)
 		cutoff = 8;
 	if (points.size() <= cutoff) {
@@ -106,10 +106,16 @@ vector<Vec2> serial::convex_hull(const vector<Vec2>& points, int cutoff) {
 	vector<Vec2> points_left = divided.first;
 	vector<Vec2> points_right = divided.second;
 
-	vector<Vec2> left = serial::convex_hull(points_left, cutoff);
-	vector<Vec2> right = serial::convex_hull(points_right, cutoff);
+	vector<Vec2> left = convex_hull_recursion(points_left, cutoff);
+	vector<Vec2> right = convex_hull_recursion(points_right, cutoff);
 	serial::sort_by_polar_coords(left, common::get_center(left));
 	serial::sort_by_polar_coords(right, common::get_center(right));
 
 	return serial::merge_convex(left, right);
+}
+
+vector<Vec2> serial::convex_hull(const vector<Vec2>& points, int cutoff) {
+	auto points_sorted = points;
+	sort(points_sorted.begin(), points_sorted.end(), [](Vec2& p1, Vec2& p2) {return p1.x < p2.x; });
+	return convex_hull_recursion(points_sorted, cutoff);
 }

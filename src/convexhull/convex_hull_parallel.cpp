@@ -52,7 +52,7 @@ vector<Vec2> parallel::merge_convex(vector<Vec2>& left, vector<Vec2>& right) {
 	return result;
 }
 
-vector<Vec2> parallel::convex_hull(const vector<Vec2>& points, int cutoff) {
+static vector<Vec2> convex_hull_recursion(const vector<Vec2>& points, int cutoff) {
 	if (cutoff < 8)
 		cutoff = 8;
 	if (points.size() <= cutoff) {
@@ -67,15 +67,21 @@ vector<Vec2> parallel::convex_hull(const vector<Vec2>& points, int cutoff) {
 	vector<Vec2> left, right;
 
 	g.run([&]() {
-		left = parallel::convex_hull(points_left, cutoff);
+		left = convex_hull_recursion(points_left, cutoff);
 		parallel::sort_by_polar_coords(left, common::get_center(left));
 		});
 	g.run([&]() {
-		right = parallel::convex_hull(points_right, cutoff);
+		right = convex_hull_recursion(points_right, cutoff);
 		parallel::sort_by_polar_coords(right, common::get_center(right));
 		});
 
 	g.wait();
 
-	return merge_convex(left, right);
+	return parallel::merge_convex(left, right);
+}
+
+vector<Vec2> parallel::convex_hull(const vector<Vec2>& points, int cutoff) {
+	auto points_sorted = points;
+	parallel_sort(points_sorted.begin(), points_sorted.end(), [](Vec2& p1, Vec2& p2) {return p1.x < p2.x; });
+	return convex_hull_recursion(points_sorted, cutoff);
 }
