@@ -21,18 +21,16 @@ static bool same_side(Vec2 A, Vec2 B, const vector<Vec2>& points) {
 }
 
 template<typename T>
-static size_t RemoveDuplicatesKeepOrder(vector<T>& vec)
+static size_t remove_duplicates(vector<T>& vec)
 {
 	set<T> seen;
-
 	auto newEnd = remove_if(vec.begin(), vec.end(), [&seen](const T& value)
-		{
-			if (seen.find(value) != end(seen))
-				return true;
-
-			seen.insert(value);
-			return false;
-		});
+	{
+		if (seen.find(value) != end(seen))
+			return true;
+		seen.insert(value);
+		return false;
+	});
 
 	vec.erase(newEnd, vec.end());
 
@@ -90,7 +88,7 @@ vector<Vec2> serial::convex_hull_naive(const vector<Vec2>& points) {
 		}
 	}
 
-	RemoveDuplicatesKeepOrder(result);
+	remove_duplicates(result);
 	serial::sort_by_polar_coords(result, common::get_center(result));
 
 	return result;
