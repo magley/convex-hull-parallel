@@ -47,6 +47,7 @@ void write_speedup_result_to_file(std::string fname, const std::vector<stats_t>&
 
 std::vector<Vec2> generate_points(std::string filename);
 std::vector<Vec2> generate_points(int num_of_points);
+std::vector<Vec2> generate_regular_points(int num_of_points);
 void output_points(const std::vector<Vec2>& points, std::string filename);
 std::vector<Vec2> get_hull(const std::vector<Vec2>& points, int cutoff);
 std::vector<Vec2> get_hull_parallel(const std::vector<Vec2>& points, int cutoff);

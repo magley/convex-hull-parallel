@@ -113,6 +113,21 @@ vector<Vec2> generate_points(int num_of_points) {
 	return points;
 }
 
+vector<Vec2> generate_regular_points(int num_of_points) {
+	vector<Vec2> points;
+
+	Vec2 c(WIN_SIZE / 2, WIN_SIZE / 2);
+	double ang = 2 * 3.14 / num_of_points;
+	for (int i = 0; i < num_of_points; i++) {
+		Vec2 p;
+		p.x = c.x + cos(ang * i) * WIN_SIZE / 2;
+		p.y = c.y + sin(ang * i) * WIN_SIZE / 2;
+		points.push_back(p);
+	}
+
+	return points;
+}
+
 vector<Vec2> get_hull(const vector<Vec2>& points, int cutoff) {
 	vector<Vec2> hull = serial::convex_hull(points, cutoff);
 	serial::sort_by_polar_coords(hull, common::get_center(hull));
