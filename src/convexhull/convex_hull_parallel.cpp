@@ -66,14 +66,8 @@ static vector<Vec2> convex_hull_recursion(const vector<Vec2>& points, int cutoff
 	task_group g;
 	vector<Vec2> left, right;
 
-	g.run([&]() {
-		left = convex_hull_recursion(points_left, cutoff);
-		parallel::sort_by_polar_coords(left, common::get_center(left));
-		});
-	g.run([&]() {
-		right = convex_hull_recursion(points_right, cutoff);
-		parallel::sort_by_polar_coords(right, common::get_center(right));
-		});
+	g.run([&]() { left = convex_hull_recursion(points_left, cutoff); });
+	g.run([&]() { right = convex_hull_recursion(points_right, cutoff); });
 
 	g.wait();
 

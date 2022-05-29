@@ -91,6 +91,7 @@ vector<Vec2> serial::convex_hull_naive(const vector<Vec2>& points) {
 	}
 
 	RemoveDuplicatesKeepOrder(result);
+	serial::sort_by_polar_coords(result, common::get_center(result));
 
 	return result;
 }
@@ -108,8 +109,6 @@ static vector<Vec2> convex_hull_recursion(const vector<Vec2>& points, int cutoff
 
 	vector<Vec2> left = convex_hull_recursion(points_left, cutoff);
 	vector<Vec2> right = convex_hull_recursion(points_right, cutoff);
-	serial::sort_by_polar_coords(left, common::get_center(left));
-	serial::sort_by_polar_coords(right, common::get_center(right));
 
 	return serial::merge_convex(left, right);
 }

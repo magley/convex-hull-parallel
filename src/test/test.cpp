@@ -120,8 +120,8 @@ vector<Vec2> generate_regular_points(int num_of_points) {
 	double ang = 2 * 3.14 / num_of_points;
 	for (int i = 0; i < num_of_points; i++) {
 		Vec2 p;
-		p.x = c.x + cos(ang * i) * WIN_SIZE / 2;
-		p.y = c.y + sin(ang * i) * WIN_SIZE / 2;
+		p.x = c.x + cos(ang * i) * WIN_SIZE / 2 * 0.9;
+		p.y = c.y + sin(ang * i) * WIN_SIZE / 2 * 0.9;
 		points.push_back(p);
 	}
 
