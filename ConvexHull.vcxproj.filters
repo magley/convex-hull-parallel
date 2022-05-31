@@ -51,6 +51,9 @@
     <None Include="include\SDL2\SDL_config.h.cmake" />
     <None Include="include\SDL2\SDL_config.h.in" />
     <None Include="include\SDL2\SDL_config_macosx.h.orig" />
+    <None Include="src\test\plot_stats.py">
+      <Filter>Source Files\test</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="lib\LICENSE.png.txt">

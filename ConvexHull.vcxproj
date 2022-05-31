@@ -158,6 +158,7 @@
     <None Include="lib\SDL2.dll" />
     <None Include="lib\SDL2_image.dll" />
     <None Include="lib\zlib1.dll" />
+    <None Include="src\test\plot_stats.py" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="lib\LICENSE.png.txt" />

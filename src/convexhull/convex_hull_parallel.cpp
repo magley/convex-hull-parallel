@@ -6,12 +6,6 @@
 using namespace std;
 using namespace tbb;
 
-void parallel::sort_by_polar_coords(vector<Vec2>& points, Vec2 reference) {
-	parallel_sort(points.begin(), points.end(), [reference](const Vec2& A, const Vec2& B) {
-		return A.get_angle_between(reference) > B.get_angle_between(reference);
-	});
-}
-
 vector<Vec2> parallel::merge_convex(vector<Vec2>& left, vector<Vec2>& right) {
 	const int l = find_rightmost(left);
 	const int r = find_leftmost(right);
@@ -56,7 +50,7 @@ static vector<Vec2> convex_hull_recursion(const vector<Vec2>& points, int cutoff
 	if (cutoff < 8)
 		cutoff = 8;
 	if (points.size() <= cutoff) {
-		return serial::convex_hull_naive(points);
+		return common::convex_hull_naive(points);
 	}
 
 	pair<vector<Vec2>, vector<Vec2>> divided = common::divide_by_median(points);
@@ -68,14 +62,13 @@ static vector<Vec2> convex_hull_recursion(const vector<Vec2>& points, int cutoff
 
 	g.run([&]() { left = convex_hull_recursion(points_left, cutoff); });
 	g.run([&]() { right = convex_hull_recursion(points_right, cutoff); });
-
 	g.wait();
 
-	return parallel::merge_convex(left, right);
+	return serial::merge_convex(left, right);
 }
 
 vector<Vec2> parallel::convex_hull(const vector<Vec2>& points, int cutoff) {
 	auto points_sorted = points;
-	parallel_sort(points_sorted.begin(), points_sorted.end(), [](Vec2& p1, Vec2& p2) {return p1.x < p2.x; });
+	sort(points_sorted.begin(), points_sorted.end(), [](Vec2& p1, Vec2& p2) {return p1.x < p2.x; }); 
 	return convex_hull_recursion(points_sorted, cutoff);
 }

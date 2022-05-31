@@ -1,10 +1,10 @@
 #include "convex_hull.h"
 #include <algorithm>
+#include <set>
 
 using namespace std;
 
 pair<vector<Vec2>, vector<Vec2>> common::divide_by_median(const vector<Vec2>& points) {
-	// pre-condition: points are sorted by x.
 	vector<Vec2> sorted_by_x = points;
 	const int mid = sorted_by_x.size() / 2;
 	const vector<Vec2> left = vector<Vec2>(sorted_by_x.begin(), sorted_by_x.begin() + mid);
@@ -14,7 +14,6 @@ pair<vector<Vec2>, vector<Vec2>> common::divide_by_median(const vector<Vec2>& po
 }
 
 bool common::merge_step(vector<Vec2>& left, vector<Vec2>& right, int& l, int& r, int tangent_side) {
-	// pre-condition: left and right are sorted by polar coords.
 	bool okA = false, okB = false;
 	float s = 0;
 
@@ -46,4 +45,61 @@ Vec2 common::get_center(std::vector<Vec2>& points) {
 	center.x /= points.size();
 	center.y /= points.size();
 	return center;
+}
+
+
+void common::sort_by_polar_coords(vector<Vec2>& points, Vec2 reference) {
+	sort(points.begin(), points.end(), [reference](const Vec2& A, const Vec2& B) {
+		return A.get_angle_between(reference) > B.get_angle_between(reference);
+		});
+}
+
+static bool same_side(Vec2 A, Vec2 B, const vector<Vec2>& points) {
+	bool should_be = side(A, B, points[0]) > EPSILON;
+	for (int i = 1; i < points.size(); i++) {
+		if (points[i] == A || points[i] == B)
+			continue;
+
+		if ((side(A, B, points[i]) > EPSILON) != should_be)
+			return false;
+	}
+	return true;
+}
+
+template<typename T>
+static size_t remove_duplicates(vector<T>& vec)
+{
+	set<T> seen;
+	auto newEnd = remove_if(vec.begin(), vec.end(), [&seen](const T& value)
+		{
+			if (seen.find(value) != end(seen))
+				return true;
+			seen.insert(value);
+			return false;
+		});
+
+	vec.erase(newEnd, vec.end());
+
+	return vec.size();
+}
+
+vector<Vec2> common::convex_hull_naive(const vector<Vec2>& points) {
+	if (points.size() <= 3)
+		return points;
+
+	vector<Vec2> result;
+
+	for (int i = 0; i < points.size(); i++) {
+		for (int j = i + 1; j < points.size(); j++) {
+			if (same_side(points[i], points[j], points)) {
+				result.push_back(points[i]);
+				result.push_back(points[j]);
+			}
+		}
+	}
+
+	remove_duplicates(result);
+	common::sort_by_polar_coords(result, common::get_center(result));
+
+	return result;
 }

@@ -6,8 +6,8 @@ from pathlib import Path
 
 input_dir = "..\\..\\out\\"
 output_dir = "..\\..\\out\\"
-input_prefix = "statistics_"
-output_prefix = "graph_"
+input_prefix = "stats_cutoff"
+output_prefix = "graph_cutoff"
 path = Path(__file__).parent / input_dir
 
 # draw_graph_for("out/statistics_01.txt", "01")
@@ -25,19 +25,16 @@ def draw_graph_for(fname, infix):
 
     with open(fname) as f:
         for i, line in enumerate(f):
-            if i == 0:
-                point_count = int(line)
-                continue
-
             parts = line.split()
 
-            x_cutoff.append(int(parts[0]))
-            y_time_serial.append(float(parts[1]) * 1000)
-            y_time_parallel.append(float(parts[2]) * 1000)
-            y_speedup.append(float(parts[3]))
+            point_count = int(parts[0])
+            x_cutoff.append(int(parts[1]))
+            y_time_serial.append(float(parts[2]) * 1000)
+            y_time_parallel.append(float(parts[3]) * 1000)
+            y_speedup.append(float(parts[4]))
 
-            if float(parts[2]) * 1000 < min_parallel:
-                min_parallel = float(parts[2])  * 1000
+            if float(parts[3]) * 1000 < min_parallel:
+                min_parallel = float(parts[3])  * 1000
                 min_index = i - 1
 
 
@@ -76,7 +73,7 @@ def plot_test_case():
 
 def plot_speedup():
     data = []
-    with open(str(path) + "\\speedup.txt") as f:
+    with open(str(path) + "\\stats_speedup.txt") as f:
         for i, line in enumerate(f):
             parts = line.split()
             d = {}
@@ -98,12 +95,12 @@ def plot_speedup():
     plt.xlabel("point count")
     plt.ylabel("speedup")
     
-    plt.savefig(str(Path(__file__).parent / output_dir) + "\\" + output_prefix + "speedup.png", bbox_inches="tight")
+    plt.savefig(str(Path(__file__).parent / output_dir) + "\\" + output_prefix + "speedup2.png", bbox_inches="tight")
     plt.clf()
 
 def plot_best_cutoff():
     data = []
-    with open(str(path) + "\\best_cutoff.txt") as f:
+    with open(str(path) + "\\stats_best_cutoff.txt") as f:
         for i, line in enumerate(f):
             parts = line.split()
             d = {}
@@ -120,8 +117,6 @@ def plot_best_cutoff():
     plt.savefig(str(Path(__file__).parent / output_dir) + "\\" + output_prefix + "best_cutoff.png", bbox_inches="tight")
     plt.clf()
 
-
-
 #plot_test_case()
-plot_speedup()
+#plot_speedup() #plt.ylim(top=7)
 #plot_best_cutoff()

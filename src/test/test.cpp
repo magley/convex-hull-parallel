@@ -5,6 +5,7 @@
 #include <map>
 #include <algorithm>
 #include <cassert>
+#include <set>
 
 #include "tbb/tick_count.h"
 #include "convexhull/convex_hull.h"
@@ -13,70 +14,26 @@
 using namespace std;
 using namespace tbb;
 
-std::vector<stats_t> run_speedup_test(int minPoints, int maxPoints, int step) {
-	vector<stats_t> statistics;
-	for (int i = minPoints; i < maxPoints; i += step) {
-		vector<Vec2> pts = generate_points(i);
-		vector<Vec2> _;
-		const int cutoff = min(50U, pts.size() / 2);
-		statistics.push_back(stats_t(run_test(pts, _, cutoff)));
-	}
-	return statistics;
-}
+static bool verbose = true;
 
-void write_speedup_result_to_file(std::string fname, const std::vector<stats_t>& stats) {
-	ofstream f = ofstream(fname);
-	for (auto& stat : stats) {
-		f << stat.point_count << " " << stat.cutoff << " " << stat.time_serial << " " << stat.time_parallel << " " << stat.speedup << "\n";
+template <class T>
+static void print(T t) {
+	if (verbose) {
+		cout << t;
 	}
 }
 
-std::vector<stats_t> run_tests(const std::vector<Vec2>& points, std::vector<Vec2>& out_points) {
-	std::vector<stats_t> statistics;
-
-	int cutoff_min, cutoff_max, cutoff_step;
-
-	cutoff_min = 15;
-	cutoff_max = 100;
-
-	if (cutoff_max < cutoff_min)
-		cutoff_max = cutoff_min;
-	if (cutoff_min > points.size()) {
-		cutoff_min = points.size();
+template <class T, class... Args>
+static void print(T t, Args... args) {
+	if (verbose) {
+		cout << t;
+		print(args...);
 	}
-	if (cutoff_max > points.size()) {
-		cutoff_max = points.size();
-	}
-
-	cutoff_step = 1;
-
-	cout << "Testing between " << cutoff_min << " and " << cutoff_max << "\n";
-
-	for (int i = cutoff_min; i <= cutoff_max; i += cutoff_step) {
-		statistics.push_back(run_test(points, out_points, i));
-	}
-
-	return statistics;
 }
 
-stats_t run_test(const std::vector<Vec2>& points, std::vector<Vec2>& out_points, int cutoff) {
-	cout << "point.size=" << points.size() << ", cutoff=" << cutoff << " ";
-	tick_count time_parallel_start = tick_count::now();
-	out_points = get_hull_parallel(points, cutoff);
-	tick_count time_parallel_end = tick_count::now();
-	double t_parallel = (time_parallel_end - time_parallel_start).seconds();
-	cout << "[parallel OK] ";
-
-	tick_count time_serial_start = tick_count::now();
-	get_hull(points, cutoff);
-	tick_count time_serial_end = tick_count::now();
-	double t_serial = (time_serial_end - time_serial_start).seconds();
-	cout << "[serial OK]\n";
-
-	double speedup = t_serial / t_parallel;
-
-	return stats_t(points.size(), cutoff, t_serial, t_parallel);
-}
+//*****************************************************************************
+// points
+//*****************************************************************************
 
 vector<Vec2> generate_points(string filename) {
 	ifstream f(filename);
@@ -87,15 +44,6 @@ vector<Vec2> generate_points(string filename) {
 	}
 
 	return points;
-}
-
-void output_points(const vector<Vec2>& points, string filename) {
-	ofstream f(filename);
-	f.clear();
-
-	for (const Vec2& v : points) {
-		f << v.x << " " << v.y << "\n";
-	}
 }
 
 vector<Vec2> generate_points(int num_of_points) {
@@ -113,37 +61,114 @@ vector<Vec2> generate_points(int num_of_points) {
 	return points;
 }
 
-vector<Vec2> generate_regular_points(int num_of_points) {
-	vector<Vec2> points;
+void output_points(const vector<Vec2>& points, string filename) {
+	ofstream f(filename);
+	f.clear();
 
-	Vec2 c(WIN_SIZE / 2, WIN_SIZE / 2);
-	double ang = 2 * 3.14 / num_of_points;
-	for (int i = 0; i < num_of_points; i++) {
-		Vec2 p;
-		p.x = c.x + cos(ang * i) * WIN_SIZE / 2 * 0.9;
-		p.y = c.y + sin(ang * i) * WIN_SIZE / 2 * 0.9;
-		points.push_back(p);
+	for (const Vec2& v : points) {
+		f << v.x << " " << v.y << "\n";
+	}
+}
+
+//*****************************************************************************
+// tests
+//*****************************************************************************
+
+struct Compare
+{
+	bool operator () (const Vec2& A, const Vec2& B) const  { if (A.x == B.x) return A.y < B.y; return A.x < B.x; }
+};
+
+stats_t run_test(const vector<Vec2>& input, vector<Vec2>& output, int cutoff) {
+	print("input.size=", input.size(), ", cutoff= ", cutoff, " ");
+
+	tick_count time_parallel_start = tick_count::now();
+	output = parallel::convex_hull(input, cutoff);
+	tick_count time_parallel_end = tick_count::now();
+	print("[P");
+
+	tick_count time_serial_start = tick_count::now();
+	auto outSer = serial::convex_hull(input, cutoff);
+	tick_count time_serial_end = tick_count::now();
+	print("S]\n");
+
+	set <Vec2, Compare> msP(output.begin(), output.end());
+	set <Vec2, Compare> msS(outSer.begin(), outSer.end());
+	assert(msP == msS);
+
+	return stats_t(
+		input.size(), 
+		cutoff, 
+		(time_serial_end - time_serial_start).seconds(),
+		(time_parallel_end - time_parallel_start).seconds()
+	);
+}
+
+vector<stats_t> run_speedup_test(int min_points, int max_points) {
+	if (min_points < 3)
+		min_points = 3;
+	if (min_points > max_points)
+		max_points = min_points;
+
+	vector<stats_t> stats;
+	
+	for (int i = min_points; i <= max_points; i++) {
+		vector<Vec2> _;
+		vector<Vec2> input = generate_points(i);
+		const int cutoff = min(50U, input.size() / 2);
+		stats.push_back(stats_t(run_test(input, _, cutoff)));
 	}
 
-	return points;
+	return stats;
 }
 
-vector<Vec2> get_hull(const vector<Vec2>& points, int cutoff) {
-	vector<Vec2> hull = serial::convex_hull(points, cutoff);
-	serial::sort_by_polar_coords(hull, common::get_center(hull));
-	return hull;
+vector<stats_t> run_cutoff_test(const std::vector<Vec2>& input, std::vector<Vec2>& output) {
+	vector<stats_t> statistics;
+
+	int cutoff_min = 15;
+	int cutoff_max = 100;
+	if (cutoff_min > input.size()) {
+		cutoff_min = input.size();
+	}
+	if (cutoff_max > input.size()) {
+		cutoff_max = input.size();
+	}
+
+	for (int i = cutoff_min; i <= cutoff_max; i++) {
+		print(i, "/", cutoff_max, " ");
+		statistics.push_back(run_test(input, output, i));
+	}
+
+	return statistics;
 }
 
-vector<Vec2> get_hull_parallel(const vector<Vec2>& points, int cutoff) {
-	vector<Vec2> hull = parallel::convex_hull(points, cutoff);
-	parallel::sort_by_polar_coords(hull, common::get_center(hull));
-	return hull;
+vector<stats_t> run_best_cutoff_test(int min_points, int max_points) {
+	vector<stats_t> best_cutoff;
+	vector<Vec2> _;
+
+	for (int n = min_points; n <= max_points; n++) {
+		vector<stats_t> cutoff_for_n = run_cutoff_test(generate_points(n), _);
+
+		int best_i = 0;
+		for (int i = 0; i < cutoff_for_n.size(); i += 10) {
+			if (cutoff_for_n[i].time_parallel < cutoff_for_n[best_i].time_parallel){
+				best_i = i;
+			}
+		}
+
+		best_cutoff.push_back(cutoff_for_n[best_i]);
+	}
+
+	return best_cutoff;
 }
 
-void write_test_result_to_file(std::string fname, const std::vector<stats_t>& stats) {
-	ofstream f = ofstream(fname);
-	f << stats[0].point_count << "\n";
-	for (auto& stat : stats) {
-		f << stat.cutoff << " " << stat.time_serial << " " << stat.time_parallel << " " << stat.speedup << "\n";
+//*****************************************************************************
+// output statistics
+//*****************************************************************************
+
+void output_stats(const std::vector<stats_t>& stats, std::string filename) {
+	ofstream o(filename);
+	for (auto& s : stats) {
+		o << s.point_count << " " << s.cutoff << " " << s.time_serial << " " << s.time_parallel << " " << s.speedup << "\n";
 	}
 }
