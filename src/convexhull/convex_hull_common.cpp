@@ -1,6 +1,8 @@
 #include "convex_hull.h"
 #include <algorithm>
 #include <set>
+#include <queue>
+#include <iterator>
 
 using namespace std;
 
@@ -102,4 +104,40 @@ vector<Vec2> common::convex_hull_naive(const vector<Vec2>& points) {
 	common::sort_by_polar_coords(result, common::get_center(result));
 
 	return result;
+}
+
+
+static Vec2 second_top(deque<Vec2>& stack) {
+	Vec2 top = stack.back();
+	stack.pop_back();
+	Vec2 top2 = stack.back();
+	stack.push_back(top);
+	return top2;
+}
+
+vector<Vec2> common::graham_scan(const vector<Vec2>& points) {
+	int p0 = 0;
+	for (int i = 0; i < points.size(); i++) {
+		if (points[i].y > points[p0].y) {
+			p0 = i;
+		}
+		else if (points[i].y == points[p0].y && points[i].x < points[p0].x) {
+			p0 = i;
+		}
+	}
+
+	auto sorted = points;
+	common::sort_by_polar_coords(sorted, points[p0]);
+
+	deque<Vec2> stack;
+	for (Vec2& p : sorted) {
+		while (stack.size() > 1 && side(second_top(stack), stack.back(), p) >= 0) {
+			stack.pop_back();
+		}
+		stack.push_back(p);
+	}
+
+	vector<Vec2> v;
+	copy(stack.cbegin(), stack.cend(), back_inserter(v));
+	return v;
 }

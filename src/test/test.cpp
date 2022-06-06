@@ -111,12 +111,37 @@ vector<stats_t> run_speedup_test(int min_points, int max_points) {
 		max_points = min_points;
 
 	vector<stats_t> stats;
-	
+
 	for (int i = min_points; i <= max_points; i++) {
 		vector<Vec2> _;
 		vector<Vec2> input = generate_points(i);
 		const int cutoff = min(50U, input.size() / 2);
 		stats.push_back(stats_t(run_test(input, _, cutoff)));
+	}
+
+	return stats;
+}
+
+vector<stats_t> run_speedup_graham(int min_points, int max_points) {
+	if (min_points < 3)
+		min_points = 3;
+	if (min_points > max_points)
+		max_points = min_points;
+
+	vector<stats_t> stats;
+
+	for (int i = min_points; i <= max_points; i++) {
+		vector<Vec2> _;
+		vector<Vec2> input = generate_points(i);
+		const int cutoff = min(50U, input.size() / 2);
+
+		print(i, "/", max_points, "\n");
+		tick_count time_start = tick_count::now();
+		common::convex_hull_naive(input);
+		tick_count time_end = tick_count::now();
+		auto dt = (time_end - time_start).seconds();
+
+		stats.push_back(stats_t(input.size(), -1, dt, dt));
 	}
 
 	return stats;

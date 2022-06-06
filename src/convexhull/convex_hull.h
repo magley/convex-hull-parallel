@@ -40,6 +40,9 @@ namespace common {
 	/// Returns the center of the given points.
 	/// </summary>
 	Vec2 get_center(std::vector<Vec2>& points);
+
+
+	std::vector<Vec2> graham_scan(const std::vector<Vec2>& points);
 }
 
 namespace serial {

@@ -69,6 +69,8 @@ stats_t run_test(const std::vector<Vec2>& input, std::vector<Vec2>& output, int 
 /// <returns>One stats_t object for each test.</returns>
 std::vector<stats_t> run_speedup_test(int min_points, int max_points);
 
+std::vector<stats_t> run_speedup_graham(int min_points, int max_points);
+
 /// <summary>
 /// Calls run_test for given set of points with different values for cutoff.
 /// </summary>
