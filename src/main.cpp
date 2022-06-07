@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
 	// ====================================================================================
 
 	vector<Vec2> points;
-	vector<Vec2> hull;
+	vector<Vec2> hull, hull_ser;
 	stats_t stats;
 
 	if (command == Command::GENERATE) {
@@ -97,9 +97,10 @@ int main(int argc, char** argv) {
 		if (should_run_test) {
 			stats = run_test(points, hull, 20);
 		}
-		else {
-			hull = parallel::convex_hull(points, 20);
-		}
+		
+		hull = parallel::convex_hull(points, 20);
+		hull_ser = serial::convex_hull(points, 20);
+		
 	}
 
 	// ====================================================================================
@@ -114,7 +115,8 @@ int main(int argc, char** argv) {
 		SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
 		SDL_RenderClear(rend);
 
-		draw_polygon(rend, hull, { 255, 255, 255, 255 });
+		draw_polygon(rend, hull, { 255, 255, 0, 200 });
+		draw_polygon(rend, hull_ser, { 0, 255, 255, 200 });
 		draw_points(rend, points, { 255, 255, 255, 255 }, Vec2(3, 3));
 		draw_text(rend, tex_font, stats, Vec2(0, 0));
 		SDL_RenderPresent(rend);

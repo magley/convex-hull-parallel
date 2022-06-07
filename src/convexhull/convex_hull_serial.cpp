@@ -57,6 +57,6 @@ static vector<Vec2> convex_hull_recursion(const vector<Vec2>& points, int cutoff
 
 vector<Vec2> serial::convex_hull(const vector<Vec2>& points, int cutoff) {
 	auto points_sorted = points;
-	sort(points_sorted.begin(), points_sorted.end(), [](Vec2& p1, Vec2& p2) {return p1.x < p2.x; });
+	sort(points_sorted.begin(), points_sorted.end());
 	return convex_hull_recursion(points_sorted, cutoff);
 }

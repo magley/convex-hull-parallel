@@ -64,11 +64,11 @@ static vector<Vec2> convex_hull_recursion(const vector<Vec2>& points, int cutoff
 	g.run([&]() { right = convex_hull_recursion(points_right, cutoff); });
 	g.wait();
 
-	return serial::merge_convex(left, right);
+	return parallel::merge_convex(left, right);
 }
 
 vector<Vec2> parallel::convex_hull(const vector<Vec2>& points, int cutoff) {
 	auto points_sorted = points;
-	parallel_sort(points_sorted.begin(), points_sorted.end(), [](Vec2& p1, Vec2& p2) {return p1.x < p2.x; }); 
+	parallel_sort(points_sorted.begin(), points_sorted.end()); 
 	return convex_hull_recursion(points_sorted, cutoff);
 }
